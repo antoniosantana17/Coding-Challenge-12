@@ -69,3 +69,15 @@ svg.append("rect")
 .on("mouseover", () => focus.style("display", null))
 .on("mouseout", () => focus.style("display", "none"))
 .on("mousemove", mousemove);
+
+function mousemove(event) {
+    const bisectDate = d3.bisector(d => d.date).left;
+    const x0 = xScale.invert(d3.pointer(event, this)[0]);
+    const i = bisectDate(data, x0, 1);
+    const d0 = data[i - 1];
+    const d1 = data[i];
+    const d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+    focus.attr("transform", `translate(${xScale(d.date)},${yScale(d.value)})`);
+    focus.select("text").text(d.value);
+}
+});
